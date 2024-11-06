@@ -18,6 +18,12 @@ namespace lab7
         private int carIndex = 0;
         private int expressIndex = 0;
 
+        private bool isFirstLayoutChanged = false;
+        private bool isSecondLayoutChanged = false;
+        private bool isThirdLayoutChanged = false;
+
+        private int index1, index2, index3;
+
         public lab7()
         {
             InitializeComponent();
@@ -26,15 +32,33 @@ namespace lab7
 
             string[] routes = { "Київ-Ромни", "Харків-Львів", "Тернопіль-Донецьк", "Херсон-Луцьк", "Житомир-Дніпро" };
             txtExpressRoute.Items.AddRange(routes);
+            txtExpressRoute1.Items.AddRange(routes);
+            txtExpressRoute2.Items.AddRange(routes);
 
             string[] serviceTypes = { "Люкс", "Купе", "Плацкарт" };
             txtExpressServiceClass.Items.AddRange(serviceTypes);
+            txtExpressServiceClass1.Items.AddRange(serviceTypes);
+            txtExpressServiceClass2.Items.AddRange(serviceTypes);
 
-            
             InitializeExpressData();
             ShowExpress();
-            //btnNextExpress.Click += BtnNextExpress_Click;
-            //btnPreviousExpress.Click += BtnPreviousExpress_Click;
+
+            btnNextExpress.Click += BtnNextExpress_Click;
+            btnPreviousExpress.Click += BtnPreviousExpress_Click;
+
+            txtExpressBrand.TextChanged += (s, e) => isFirstLayoutChanged = true;
+            txtExpressBrand1.TextChanged += (s, e) => isSecondLayoutChanged = true;
+            txtExpressBrand2.TextChanged += (s, e) => isThirdLayoutChanged = true;
+
+            Font commonFont = new Font("Arial", 8);  
+
+            foreach (Control control in this.Controls)
+            {
+                if (control is Label || control is TextBox || control is Button)
+                {
+                    control.Font = commonFont;  
+                }
+            }
         }
 
         private void InitializeExpressData()
@@ -54,7 +78,8 @@ namespace lab7
                 txtCarFuelType.Text,
                 Convert.ToInt32(txtCarDoors.Text),
                 comboBox1.Text,
-                txtCarColor.Text);
+                txtCarColor.Text
+            );
 
             cars.Add(newCar);
             UpdateCarDisplay();
@@ -117,24 +142,83 @@ namespace lab7
 
         private void btnAddExpress_Click(object sender, EventArgs e)
         {
+            if (isFirstLayoutChanged)
+            {
+                AddExpressFromFirstLayout();
+                isFirstLayoutChanged = false; 
+            }
+            if (isSecondLayoutChanged)
+            {
+                AddExpressFromSecondLayout();
+                isSecondLayoutChanged = false; 
+            }
+            if (isThirdLayoutChanged)
+            {
+                AddExpressFromThirdLayout();
+                isThirdLayoutChanged = false; 
+            }
 
-            //Express newExpress = new Express(
-            //    txtExpressBrand.Text,
-            //    Convert.ToInt32(txtExpressSpeed.Text),
-            //    Convert.ToInt32(txtExpressYear.Text),
-            //    txtExpressModel.Text,
-            //    Convert.ToInt32(txtExpressCarriages.Text),
-            //    Convert.ToInt32(txtExpressPassengerCapacity.Text),
-            //    txtExpressRoute.Text,
-            //    Convert.ToDouble(txtExpressTravelTime.Text),
-                
-            //    txtExpressServiceClass.Text,
-            //    txtExpressCatering.Text,
-            //    wifiAvailable.Checked);
+            ShowExpress();
+        }
 
-            //Expresss.Add(newExpress);
-            //expressIndex = Expresss.Count - 1;
-            //UpdateExpressDisplay();
+        private void AddExpressFromFirstLayout()
+        {
+            Express newExpress = new Express(
+                 txtExpressBrand.Text,
+                Convert.ToInt32(txtExpressSpeed.Text),
+                Convert.ToInt32(txtExpressYear.Text),
+                txtExpressModel.Text,
+                Convert.ToInt32(txtExpressCarriages.Text),
+                Convert.ToInt32(txtExpressPassengerCapacity.Text),
+                txtExpressRoute.Text,
+                Convert.ToDouble(txtExpressTravelTime.Text),
+                highSpeed1.Checked,
+                txtExpressServiceClass.Text,
+                txtExpressCatering.Text,
+                wifiAvailable.Checked
+            );
+
+            Expresss.Add(newExpress);
+        }
+
+        private void AddExpressFromSecondLayout()
+        {
+            Express newExpress = new Express(
+                 txtExpressBrand1.Text,
+                Convert.ToInt32(txtExpressSpeed1.Text),
+                Convert.ToInt32(txtExpressYear1.Text),
+                txtExpressModel1.Text,
+                Convert.ToInt32(txtExpressCarriages1.Text),
+                Convert.ToInt32(txtExpressPassengerCapacity1.Text),
+                txtExpressRoute1.Text,
+                Convert.ToDouble(txtExpressTravelTime1.Text),
+                highSpeed2.Checked,
+                txtExpressServiceClass1.Text,
+                txtExpressCatering1.Text,
+                wifiAvailable1.Checked
+            );
+
+            Expresss.Add(newExpress);
+        }
+
+        private void AddExpressFromThirdLayout()
+        {
+            Express newExpress = new Express(
+                 txtExpressBrand2.Text,
+                Convert.ToInt32(txtExpressSpeed2.Text),
+                Convert.ToInt32(txtExpressYear2.Text),
+                txtExpressModel2.Text,
+                Convert.ToInt32(txtExpressCarriages2.Text),
+                Convert.ToInt32(txtExpressPassengerCapacity2.Text),
+                txtExpressRoute2.Text,
+                Convert.ToDouble(txtExpressTravelTime2.Text),
+                highSpeed3.Checked,
+                txtExpressServiceClass2.Text,
+                txtExpressCatering2.Text,
+                wifiAvailable2.Checked
+            );
+
+            Expresss.Add(newExpress);
         }
 
         private void ShowFirstExpress(int index)
@@ -245,9 +329,13 @@ namespace lab7
         {
             if (Expresss.Count > 0)
             {
-                ShowFirstExpress(0);
-                if (Expresss.Count > 1) ShowSecondExpress(1);
-                if (Expresss.Count > 2) ShowThirdExpress(2);
+                index1 = expressIndex % Expresss.Count;
+                index2 = (expressIndex + 1) % Expresss.Count;
+                index3 = (expressIndex + 2) % Expresss.Count;
+
+                ShowFirstExpress(index1);
+                ShowSecondExpress(index2);
+                ShowThirdExpress(index3);
             }
             else
             {
@@ -257,56 +345,20 @@ namespace lab7
             }
         }
 
-        private void btnRemoveExpress_Click(object sender, EventArgs e)
+        private void ShowPreviousExpress()
         {
             if (Expresss.Count > 0)
             {
-                Expresss.RemoveAt(expressIndex);
-                if (expressIndex >= Expresss.Count) expressIndex--;
-                UpdateExpressDisplay();
-            }
-        }
+                expressIndex = (expressIndex - 1 + Expresss.Count) % Expresss.Count;
 
-        private void UpdateExpressDisplay()
-        {
-            if (Expresss.Count > 0)
-            {
-                var express = Expresss[expressIndex];
+                int index1 = (expressIndex) % Expresss.Count;
+                int index2 = (expressIndex + 1) % Expresss.Count;
+                int index3 = (expressIndex + 2) % Expresss.Count;
 
-                txtExpressBrand.Text = express.Brand;
-                txtExpressModel.Text = express.Model;
-                txtExpressCarriages.Text = express.Carriages.ToString();
-                txtExpressPassengerCapacity.Text = express.PassengerCapacity.ToString();
-                txtExpressRoute.Text = express.Route;
-                txtExpressTravelTime.Text = express.TravelTime.ToString();
-                //h.Checked = false;
-                txtExpressServiceClass.Text = express.ServiceClass;
-                txtExpressCatering.Text = express.Catering;
-                wifiAvailable.Checked = express.WiFIAvailable;
+                ShowFirstExpress(index1);
+                ShowSecondExpress(index2);
+                ShowThirdExpress(index3);
             }
-            else
-            {
-                ClearExpressDisplay();
-            }
-        }
-
-        private void ClearExpressDisplay()
-        {
-            txtExpressBrand.Clear();
-            txtExpressModel.Clear();
-            txtExpressCarriages.Clear();
-            txtExpressPassengerCapacity.Clear();
-            txtExpressRoute.SelectedIndex = -1;
-            txtExpressTravelTime.Clear();
-            //hi.Checked = false;
-            txtExpressServiceClass.SelectedIndex = -1;
-            txtExpressCatering.Clear();
-            wifiAvailable.Checked = false;
-        }
-        private void RemoveExpress(Express express)
-        {
-            Expresss.Remove(express);
-            UpdateExpressDisplay();
         }
 
         private void BtnNextExpress_Click(object sender, EventArgs e)
@@ -314,16 +366,43 @@ namespace lab7
             if (Expresss.Count > 0)
             {
                 expressIndex = (expressIndex + 1) % Expresss.Count;
-                UpdateExpressDisplay();
+                ShowExpress();
             }
         }
 
         private void BtnPreviousExpress_Click(object sender, EventArgs e)
         {
-            if (Expresss.Count > 0)
+            ShowPreviousExpress();
+        }
+
+        private void btnRemoveExpress_Click(object sender, EventArgs e)
+        {
+            Button clickedButton = sender as Button;
+
+            if (clickedButton == btnRemoveFirst)
             {
-                expressIndex = (expressIndex - 1 + Expresss.Count) % Expresss.Count;
-                UpdateExpressDisplay();
+                RemoveExpressAtIndex(index1);
+            }
+            else if (clickedButton == btnRemoveSecond)
+            {
+                RemoveExpressAtIndex(index2);
+            }
+            else if (clickedButton == btnRemoveThird)
+            {
+                RemoveExpressAtIndex(index3);
+            }
+        }
+
+        private void RemoveExpressAtIndex(int index)
+        {
+            if (index >= 0 && index < Expresss.Count)
+            {
+                Expresss.RemoveAt(index);
+
+                if (expressIndex >= Expresss.Count)
+                    expressIndex = 0;
+
+                ShowExpress();
             }
         }
     }
