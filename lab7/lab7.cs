@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace lab7
         private bool isThirdLayoutChanged = false;
 
         private int index1, index2, index3;
+
+        private List<string> currentCollection;
 
         public lab7()
         {
@@ -59,6 +62,8 @@ namespace lab7
                     control.Font = commonFont;  
                 }
             }
+
+           
         }
 
         private void InitializeExpressData()
@@ -66,6 +71,82 @@ namespace lab7
             Expresss.Add(new Express("Hyundai", 180, 2020, "H1", 10, 200, "Київ-Ромни", 2.5, true, "Люкс", "Закуски", true));
             Expresss.Add(new Express("Siemens", 220, 2018, "S2", 8, 150, "Харків-Львів", 3.0, false, "Купе", "Закуски та напої", true));
             Expresss.Add(new Express("Bombardier", 200, 2019, "B1", 12, 250, "Тернопіль-Донецьк", 4.0, true, "Плацкарт", "Без", false));
+        }
+
+        private void CarFile_Click(object sender, EventArgs e)
+        {
+            StreamWriter sw = new StreamWriter("D:\\University\\3 курс\\ТРПЗ\\КП7\\lab7\\lab7\\bin\\Debug\\cars.txt");
+            List<string> result = new List<string>();
+
+            foreach (var car in cars)
+            {
+                result.Add($"Автомобіль Бренд: {car.Brand}, Модель: {car.Model}, Рік випуску: {car.Year}, " +
+                    $"Швидкість: {car.Speed}, Тип палива: {car.FuelType},  К-сть дверей: {car.Doors}, Коробка передач: {car.GearBox}, Колір: {car.Color}");
+            }
+
+            foreach (var car in result)
+            {
+                sw.WriteLine(car);
+            }
+            sw.Close();
+        }
+
+        private void ExpressFile_Click(object sender, EventArgs e)
+        {
+            StreamWriter sw = new StreamWriter("D:\\University\\3 курс\\ТРПЗ\\КП7\\lab7\\lab7\\bin\\Debug\\express.txt");
+            List<string> result = new List<string>();
+
+            foreach (var express in Expresss)
+            {
+                result.Add($"Експрес Бренд: {express.Brand}, Швидкість: {express.Speed}, Рік випуску: {express.Year}, " +
+                    $"Модель: {express.Model}, Кількість вагонів: {express.Carriages}, Пасажиромісткість: {express.PassengerCapacity}, " +
+                    $"Маршрут: {express.Route}, Час у дорозі: {express.TravelTime}, Високошвидкісний: {express.IsHighSpeed}, " +
+                    $"Клас обслуговування: {express.ServiceClass}, Харчування: {express.Catering}, WiFi: {express.WiFIAvailable}");
+            }
+
+            foreach (var express in result)
+            {
+                sw.WriteLine(express);
+            }
+            sw.Close();
+        }
+
+        private void CarRTB_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<string> result = new List<string>();
+
+            foreach (var car in cars)
+            {
+                result.Add($"Автомобіль Бренд: {car.Brand}, Модель: {car.Model}, Рік випуску: {car.Year}, " +
+                    $"Швидкість: {car.Speed}, Тип палива: {car.FuelType},  К-сть дверей: {car.Doors}, Коробка передач: {car.GearBox}, Колір: {car.Color}");
+            }
+
+            foreach (var car in result)
+            {
+                sb.AppendLine(car);
+            }
+            richTextBox1.Text = sb.ToString();
+        }
+
+        private void ExpressRTB_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<string> result = new List<string>();
+
+            foreach (var express in Expresss)
+            {
+                result.Add($"Експрес Бренд: {express.Brand}, Швидкість: {express.Speed}, Рік випуску: {express.Year}, " +
+                    $"Модель: {express.Model}, Кількість вагонів: {express.Carriages}, Пасажиромісткість: {express.PassengerCapacity}, " +
+                    $"Маршрут: {express.Route}, Час у дорозі: {express.TravelTime}, Високошвидкісний: {express.IsHighSpeed}, " +
+                    $"Клас обслуговування: {express.ServiceClass}, Харчування: {express.Catering}, WiFi: {express.WiFIAvailable}");
+            }
+
+            foreach (var express in result)
+            {
+                sb.AppendLine(express);
+            }
+            richTextBox1.Text = sb.ToString();
         }
 
         public void btnAddCar_Click(object sender, EventArgs e)
@@ -140,6 +221,32 @@ namespace lab7
             }
         }
 
+        private void TextBoxCar_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var activeCar = cars[carIndex];
+                string carToString = $"Автомобіль Бренд: {activeCar.Brand}, Модель: {activeCar.Model}, Рік випуску: {activeCar.Year}, " +
+                      $"Швидкість: {activeCar.Speed}, Тип палива: {activeCar.FuelType},  К-сть дверей: {activeCar.Doors}, Коробка передач: {activeCar.GearBox}, Колір: {activeCar.Color}";
+                Console.WriteLine(carToString);
+                MessageBox.Show(carToString, "Car Information");
+            }
+        }
+
+        private void TextBoxTrain_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var activeTrain = Expresss[expressIndex];
+                string expressToString = $"Експрес Бренд: {activeTrain.Brand}, Швидкість: {activeTrain.Speed}, Рік випуску: {activeTrain.Year}, " +
+                  $"Модель: {activeTrain.Model}, Кількість вагонів: {activeTrain.Carriages}, Пасажиромісткість: {activeTrain.PassengerCapacity}, " +
+                  $"Маршрут: {activeTrain.Route}, Час у дорозі: {activeTrain.TravelTime}, Високошвидкісний: {activeTrain.IsHighSpeed}, " +
+                  $"Клас обслуговування: {activeTrain.ServiceClass}, Харчування: {activeTrain.Catering}, WiFi: {activeTrain.WiFIAvailable}";
+                Console.WriteLine(expressToString);
+                MessageBox.Show(expressToString.ToString(), "Train Information");
+            }
+        }
+
         private void btnAddExpress_Click(object sender, EventArgs e)
         {
             if (isFirstLayoutChanged)
@@ -180,7 +287,6 @@ namespace lab7
 
             Expresss.Add(newExpress);
         }
-
         private void AddExpressFromSecondLayout()
         {
             Express newExpress = new Express(
@@ -372,7 +478,12 @@ namespace lab7
 
         private void BtnPreviousExpress_Click(object sender, EventArgs e)
         {
-            ShowPreviousExpress();
+            if (Expresss.Count > 0)
+            {
+                expressIndex = (expressIndex - 1 + Expresss.Count) % Expresss.Count;
+
+                ShowExpress();
+            }
         }
 
         private void btnRemoveExpress_Click(object sender, EventArgs e)
@@ -402,9 +513,63 @@ namespace lab7
                 if (expressIndex >= Expresss.Count)
                     expressIndex = 0;
 
-                ShowExpress();
+                if (Expresss.Count <= 2)
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            txtExpressBrand.Text = " ";
+                            txtExpressSpeed.Text = " ";
+                            txtExpressYear.Text = " ";
+                            txtExpressModel.Text = " ";
+                            txtExpressCarriages.Text = " ";
+                            txtExpressPassengerCapacity.Text = " ";
+                            txtExpressRoute.Text = " ";
+                            txtExpressTravelTime.Text = " ";
+                            highSpeed1.Checked = false;
+                            txtExpressServiceClass.SelectedIndex = -1;
+                            txtExpressCatering.Text = " ";
+                            wifiAvailable.Checked = false;
+                            break;
+
+                        case 1:
+                            txtExpressBrand1.Text = " ";
+                            txtExpressSpeed1.Text = " ";
+                            txtExpressYear1.Text = " ";
+                            txtExpressModel1.Text = " ";
+                            txtExpressCarriages1.Text = " ";
+                            txtExpressPassengerCapacity1.Text = " ";
+                            txtExpressRoute1.Text = " ";
+                            txtExpressTravelTime1.Text = " ";
+                            highSpeed2.Checked = false;
+                            txtExpressServiceClass1.SelectedIndex = -1;
+                            txtExpressCatering1.Text = " ";
+                            wifiAvailable1.Checked = false;
+                            break;
+                        case 2:
+                            txtExpressBrand2.Text = " ";
+                            txtExpressSpeed2.Text = " ";
+                            txtExpressYear2.Text = " ";
+                            txtExpressModel2.Text = " ";
+                            txtExpressCarriages2.Text = " ";
+                            txtExpressPassengerCapacity2.Text = " ";
+                            txtExpressRoute2.Text = " ";
+                            txtExpressTravelTime2.Text = " ";
+                            highSpeed3.Checked = false;
+                            txtExpressServiceClass2.SelectedIndex = -1;
+                            txtExpressCatering2.Text = " ";
+                            wifiAvailable2.Checked = false;
+                            break;
+                    }
+                }
+                else
+                {
+                    ShowExpress();
+                }
+            }
+               
             }
         }
     }
-}
+
 
